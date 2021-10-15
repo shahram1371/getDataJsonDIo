@@ -1,31 +1,25 @@
 import 'package:dio/dio.dart';
-import 'Users.dart';
+import 'Shoes.dart';
 
 class DioClient {
   final Dio _dio = Dio();
-  final _baseUrl = "https://reqres.in/api";
+  final String url = "http://welearnacademy.ir/flutter/products_list.json";
 
-  Future<User?> getUser({required String id}) async {
-    User? user;
+  Future<List<Shoes>?> getData() async {
+    List<Shoes>? shoelist = [];
     try {
-      Response userData = await _dio.get(_baseUrl + '/users/$id');
-
-      print('User Info: ${userData.data}');
-      user = User.fromJson(userData.data);
-      // print('User Info: ${user.data}');
-    } on DioError catch (e) {
-      if (e.response != null) {
-        print('Dio error!');
-        print('STATUS: ${e.response?.statusCode}');
-        print('DATA: ${e.response?.data}');
-        print('HEADERS: ${e.response?.headers}');
-      } else {
-        print('Error sending request!');
-        print(e.message);
+      Response response = await Dio().get(url);
+      if (response.statusCode == 200) {
+        for (var item in response.data) {
+          shoelist.add(Shoes.fromJson(item));
+        }
+        return shoelist;
       }
+    } on DioError catch (e) {
+      print(e);
     }
 
-    return user;
+    return shoelist;
   }
 }
 
@@ -40,3 +34,19 @@ class DioClient {
 //                   subtitle: Text(user.email),
 //                 );
 //               }),
+
+
+// class Services {
+//   static const String url = "https://jsonplaceholder.typicode.com/users";
+//   static Future<List<User>?> getUsers() async {
+//     Response response;
+//     List<User>? users = [];
+//     try {
+//       response = await Dio().get(url);
+//       users = userFromJson(response.data);
+//     } catch (e) {
+//       print(e);
+//     }
+//     return users;
+//   }
+// }
